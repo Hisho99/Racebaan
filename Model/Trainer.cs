@@ -14,7 +14,7 @@ namespace Model
 
         public Trainer(IEquipment equipment, TeamColors teamColor)
         {
-            Name = Hardcoded.ParticipantNames[Randomizer.rand.Next(Hardcoded.ParticipantNames.Length)];
+            Name = Hardcoded.ParticipantNames[Randomizer.r.Next(Hardcoded.ParticipantNames.Length)];
             Points = 0;
             Equipment = equipment;
             TeamColor = teamColor;

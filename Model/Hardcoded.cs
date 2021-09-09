@@ -12,7 +12,11 @@ namespace Model
         public static string[] TrackNames =
         {
         "Track 1",
-        "Track 2"
+        "Track 2",
+        "Track 3",
+        "Track 4",
+        "Track 5",
+        "Track 6"
         };
 
         // static List<SectionTypes[]> Tracklist;

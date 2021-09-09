@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Model
 {
-    class Randomizer
+    public static class Randomizer
     {
-        public static Random rand = new Random();
+        public static Random r = new Random();
     }
 }

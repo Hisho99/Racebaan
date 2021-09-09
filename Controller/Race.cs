@@ -13,31 +13,30 @@ namespace Controller
         private Random _random { get; set; }
         private Dictionary<Section, SectionData> _positions;
 
-
+        
         public Race(Track track, List<IParticipant> participants)
         {
             Track = track;
             Participants = participants;
             _random = new Random(DateTime.Now.Millisecond);
             _positions = new Dictionary<Section, SectionData>();
+            StartTime = DateTime.Now;
         }
 
-
+        //Getter for SectionData that fills it if it returns NULL
         public SectionData GetSectionData(Section section)
         {
             if (_positions.TryGetValue(section, out SectionData d))
             { return d; }
             else
             {
-
-
                 SectionData sd = new SectionData();
                 _positions[section] = sd;
                 return sd;
             }
         }
 
-        // Randomizes equipment 
+        // Randomizes equipment for Participants
         public void RandomizeEquipment()
         {
             foreach (IParticipant p in Participants)
@@ -46,8 +45,6 @@ namespace Controller
                 p.Equipment.Performane = _random.Next(1,10);
             }
         }
-
-
 
     }
 }
