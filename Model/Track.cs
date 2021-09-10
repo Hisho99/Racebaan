@@ -15,11 +15,21 @@ public class Track
         {
             Name = name;
             Sections = new LinkedList<Section>();
-            foreach (SectionTypes s in sections)
+            Sections = SectionArrayConverter(sections);
+
+        }
+
+        //Converts SectionTypes array to a LinkedList<Section> to make a full circuit.
+        public LinkedList<Section> SectionArrayConverter(SectionTypes[] sections)
+        {
+            LinkedList<Section> s = new LinkedList<Section>();
+            foreach (SectionTypes sectiontype in sections)
             {
-                Section section = new Section(s);
-                Sections.AddLast(section);
+                Section sec = new Section(sectiontype);
+                Sections.AddLast(sec);
             }
+
+            return s;
         }
 
     }
