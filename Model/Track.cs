@@ -21,5 +21,6 @@ public class Track
                 Sections.AddLast(section);
             }
         }
+
     }
 }
