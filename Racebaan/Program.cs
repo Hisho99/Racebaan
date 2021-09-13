@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Controller;
@@ -140,11 +141,44 @@ namespace Racebaan
             "---/  "
         };
 
+        private static string[] _startVertical =
+        {
+
+            "|    |",
+            "|    |",
+            "|  - |",
+            "| -  |",
+            "|    |",
+            "|    |"
+        };
+
+        private static string[] _startHorizontal =
+        {
+            "------",
+            "      ",
+            "  |   ",
+            "	|  ",
+            "      ",
+            "------"
+        };
+
+        private static string[] _blank =
+        {
+            "      ",
+            "      ",
+            "      ",
+            "      ",
+            "      ",
+            "      "
+        };
+
 
         private static List<string[]> Leftcorners;
         private static List<string[]> Rightcorners;
         private static List<string[]> Straights;
-        private static int Bearing;
+        private static List<string[]> Finishes;
+        private static List<string[]> Startgrids;
+
 
         //makes lists for trackmaking used in DrawTrack
         public static void MakeLeftCornerList()
@@ -154,8 +188,6 @@ namespace Racebaan
             Leftcorners.Add(_rightCornerUp);
             Leftcorners.Add(_rightCornerDown);
             Leftcorners.Add(_leftCornerDown);
-
-          
         }
 
         public static void MakeRightCornerList()
@@ -174,27 +206,123 @@ namespace Racebaan
             Straights.Add(_straightHorizontal);
         }
 
-            
-        
-            #endregion
+        public static void MakeFinishList()
+        {
+            Finishes = new List<string[]>();
+            Finishes.Add(_finishHorizontal);
+            Finishes.Add(_finishVertical);
+        }
+
+        public static void MakeStartList()
+        {
+            Startgrids.Add(_startVertical);
+            Startgrids.Add(_startHorizontal);
+        }
+
+
+
+        #endregion
+
+        private enum Bearings
+        {
+            North,
+            East,
+            South,
+            West
+        };
+
+        // Multi-dimentional array for Visualation of racetrack
+        private static string[][] AssebledTrack;
         public static void Initialize()
         {
             MakeLeftCornerList();
             MakeRightCornerList();
             MakeStraightsList();
+            MakeFinishList();
+            MakeStartList();
             
             DrawTrack(Data.CurrentRace.Track);
 
         }
 
+        public static string[][] IncreaseDownLimitArray(string[][] s)
+        {
+            return s;
+        }
+
         public static void DrawTrack(Model.Track track)
         {
             Console.BackgroundColor = ConsoleColor.Green;
-            Bearing = 1;
+            int Bearing = 1;
+            int[] Coördinates = new int[2] {0, 0};
+
+            Bearings b = Bearings.North;
 
             foreach (Model.Section s in track.Sections)
             {
-                
+                //Establish current Bearings 
+                switch (Bearing)
+                {
+                    case 1:
+                    {
+                        b = Bearings.North;
+
+                        break;
+                    }
+                    case 2:
+                    {
+                        b = Bearings.East;
+
+                        break;
+                    }
+                    case 3:
+                    {
+                        b = Bearings.South;
+
+                        break;
+                    }
+                    case 4:
+                    {
+                        b = Bearings.West;
+
+                        break;
+                    }
+                }
+
+                //place sections into string[][] array based on sectiontype, bearings and coordinates
+                switch (s.SectionType)
+                {
+                    case Model.SectionTypes.StartGrid:
+                    {
+                     
+
+                        break;
+                    }
+                    case Model.SectionTypes.Straight:
+                    {
+
+                        break;
+                    }
+                    case Model.SectionTypes.LeftCorner:
+                    {
+
+                        break;
+                    }
+                    case Model.SectionTypes.RightCorner:
+                    {
+
+                        break;
+                    }
+                    case Model.SectionTypes.Finish:
+                    {
+
+                        break;
+                    }
+
+                    default: break;
+
+
+                }
             }
 
 

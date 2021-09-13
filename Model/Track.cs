@@ -28,7 +28,6 @@ public class Track
                 Section sec = new Section(sectiontype);
                 Sections.AddLast(sec);
             }
-
             return s;
         }
 
