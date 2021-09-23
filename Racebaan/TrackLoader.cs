@@ -9,11 +9,9 @@ namespace Racebaan
 {
     public class TrackLoader
     {
-
         #region graphics
-
         //to shorten variable names _leftCornerNorthRightcornerEast > _lcnrce
-        private static string[] _lcnRce =
+        public static string[] _lcnRce =
         {
             "---\\  ",
             "    \\ ",
@@ -23,7 +21,7 @@ namespace Racebaan
             " 	  |"
         };
 
-        private static string[] _lcwRcn =
+        public static string[] _lcwRcn =
         {
             "  /---",
             " /    ",
@@ -34,7 +32,7 @@ namespace Racebaan
 
         };
 
-        private static string[] _lcsRcw =
+        public static string[] _lcsRcw =
         {
             "|     ",
             "|     ",
@@ -45,7 +43,7 @@ namespace Racebaan
 
         };
 
-        private static string[] _lceRcs =
+        public static string[] _lceRcs =
         {
             "     |",
             "     |",
@@ -65,7 +63,7 @@ namespace Racebaan
             "|    |"
         };
 
-        private static string[] _straightHorizontal =
+        public static string[] _straightHorizontal =
         {
             "------",
             "      ",
@@ -75,7 +73,7 @@ namespace Racebaan
             "------"
         };
 
-        private static string[] _finishHorizontal =
+        public static string[] _finishHorizontal =
         {
             "|    |",
             "|    |",
@@ -85,7 +83,7 @@ namespace Racebaan
             "|    |"
         };
 
-        private static string[] _finishVertical =
+        public static string[] _finishVertical =
         {
             "------",
             "  ##  ",
@@ -95,7 +93,7 @@ namespace Racebaan
             "------"
         };
 
-        private static string[] _finishLeftCornerUp =
+        public static string[] _finishLeftCornerUp =
         {
             "---\\  ",
             "    \\ ",
@@ -105,7 +103,7 @@ namespace Racebaan
             " 	  |"
         };
 
-        private static string[] _finishRightCornerUp =
+        public static string[] _finishRightCornerUp =
         {
             "  /---",
             " /    ",
@@ -116,7 +114,7 @@ namespace Racebaan
 
         };
 
-        private static string[] _finishRightCornerDown =
+        public static string[] _finishRightCornerDown =
         {
             "|     ",
             "|    #",
@@ -126,7 +124,7 @@ namespace Racebaan
             "  \\---"
         };
 
-        private static string[] _finishLeftCornerDown =
+        public static string[] _finishLeftCornerDown =
         {
             "     |",
             "#    |",
@@ -136,7 +134,7 @@ namespace Racebaan
             "---/  "
         };
 
-        private static string[] _startVertical =
+        public static string[] _startVertical =
         {
 
             "|    |",
@@ -157,348 +155,423 @@ namespace Racebaan
             "------"
         };
 
-        public static string[] _blank =
-        {
-            "      ",
-            "      ",
-            "      ",
-            "      ",
-            "      ",
-            "      "
-        };
-
-
-
-
         #endregion
-        public List<string[]> Leftcorners;
-        public List<string[]> Rightcorners;
-        public List<string[]> Straights;
-        public List<string[]> Finishes;
-        public List<string[]> Startgrids;
 
+        public static List<string[]> Leftcorners = new List<string[]> { _lcnRce, _lceRcs, _lcsRcw, _lcwRcn };
+        public static List<string[]> Rightcorners = new List<string[]> { _lcwRcn, _lcnRce, _lceRcs, _lcsRcw };
+        public static List<string[]> Straights = new List<string[]> { _straightVertical, _straightHorizontal, _straightVertical, _straightHorizontal };
+        public static List<string[]> Finishes = new List<string[]> { _finishVertical, _finishHorizontal, _finishVertical, _finishHorizontal};
+        public static List<string[]> Startgrids = new List<string[]>{_startVertical,_startHorizontal,_startVertical,_startHorizontal};
 
-        //makes lists for trackmaking used in DrawTrack
-        public void MakeLeftCornerList()
+        public void AssignXY(Model.Track track)
         {
-            Leftcorners = new List<string[]>();
-            Leftcorners.Add(_lcnRce);
-            Leftcorners.Add(_lceRcs);
-            Leftcorners.Add(_lcsRcw);
-            Leftcorners.Add(_lcwRcn);
-
+            int compas = 0;
+            int x = 0;
+            int y = 0;
+            foreach (Model.Section s in track.Sections)
+            {
+                switch (s.SectionType)
+                {
+                    case Model.SectionTypes.LeftCorner:
+                            LeftCorners(s, compas, x, y);  
+                            break;
+                    case Model.SectionTypes.RightCorner:
+                            RightCorners(s, compas, x, y);
+                            break;
+                    default:
+                        Straight(s, compas, x, y);
+                        break;
+                }
+            }
+            NegativeXYCheck(track.Sections);
         }
 
-        public void MakeRightCornerList()
+        public void LeftCorners(Model.Section c, int i, int x, int y)
         {
-            Rightcorners = new List<string[]>();
-            Rightcorners.Add(_lcwRcn);
-            Rightcorners.Add(_lcnRce);
-            Rightcorners.Add(_lceRcs);
-            Rightcorners.Add(_lcsRcw);
+            /*North = -y
+              East  = -x
+              South = +y
+              West  = +x*/
+            switch (i)
+            {
+                case 0:
+                        y--;
+                        break;
+                case 1:
+                        x--;
+                        break;
+                case 2:
+                        y++;
+                        break;
+                case 3:
+                        x++;
+                        break;
+                default:
+                    break;
+            }
+            i--;
+            if (i < 0)
+            {
+                i = 3;
+            }
+            c.Xval = x;
+            c.Yval = y;
+
+        }
+        public void RightCorners(Model.Section c, int i, int x, int y)
+        {
+            /*North = +y
+              East  = +x
+              South = -y
+              West  = -x*/
+            switch (i)
+            {
+                case 0:
+                        y++;
+                        break;
+                case 1:
+                        x++;
+                        break;
+                case 2:
+                        y--;
+                        break;
+                case 3:
+                        x--;
+                        break;
+                default:
+                    break;
+            }
+            i++;
+            if (i > 3)
+            {
+                i = 0;
+            }
+            c.Xval = x;
+            c.Yval = y;
+        }
+        public void Straight(Model.Section s, int i, int x, int y)
+        {
+            /*North = -x
+              East  = +y
+              South = +x
+              West  = -y*/
+            switch (i)
+            {
+                case 0:
+                        x--;
+                    break;
+                case 1:
+                        y++;
+                        break;
+                case 2:
+                        x++;
+                        break;
+                case 3:
+                        y--;
+                        break;
+                default:
+                    break;
+            }
+            s.Xval = x;
+            s.Yval = y;
+        }
+        public void NegativeXYCheck(LinkedList<Model.Section> s)
+        {
+            int offsetX = 0;
+            int offsetY = 0;
+
+            foreach (Model.Section sec in s)
+            {
+                offsetX = Math.Min(offsetX, sec.Xval);
+                offsetY = Math.Min(offsetY, sec.Yval);
+            }
+
+            if (offsetX < 0 || offsetY < 0)
+            {
+                offsetY = Math.Abs(offsetY);
+                offsetX = Math.Abs(offsetX);
+                foreach (Model.Section sec in s)
+                {
+                    sec.Xval = sec.Xval + offsetX;
+                    sec.Yval = sec.Yval + offsetY;
+                } 
+            }
         }
 
-        public void MakeStraightsList()
-        {
-            Straights = new List<string[]>();
-            Straights.Add(_straightVertical);
-            Straights.Add(_straightHorizontal);
-        }
-
-        public void MakeFinishList()
-        {
-            Finishes = new List<string[]>();
-            Finishes.Add(_finishHorizontal);
-            Finishes.Add(_finishVertical);
-        }
-
-        public void MakeStartList()
-        {
-            Startgrids.Add(_startVertical);
-            Startgrids.Add(_startHorizontal);
-        }
-
-        public void Makelitst()
-        {
-            MakeLeftCornerList();
-            MakeRightCornerList();
-            MakeStraightsList();
-            MakeFinishList();
-            MakeStartList();
-        }
-
-        // Dictionary for Visualation of racetrack
-        private static List<string[]> trackSequence;
-        private static int[,] trackCoördinates;
-        public string[,] assembledTrack;
-
-        public enum Bearings
-        {
-            North,
-            East,
-            South,
-            West
-        };
-
-        
-        public int[] coördinates = new int[2] { 0, 0 };
-        public Queue<int[]> q = new Queue<int[]>();
 
         //variables to compensate for negative coördinates, ultimately creating only positive coördinates
 
 
         //compas to know which orientation a section should be drawn
-        Bearings b = Bearings.North;
 
-        private void LowestCoördinate(Queue<int[]> q)
+        /*        public int HighestYCoördinate(int[,] ints)
+                {
+                    int maximum = 0;
+                    for (int i = 0; i < ints.Length / 2; i++)
+                    {
+
+                        maximum = Math.Max(maximum, ints[i, 1]);
+                        maximum = Math.Max(maximum, ints[i, 0]);
+                    }
+                    return maximum;
+                }*/
+
+        /*public void CoördinateBinder(int[,] ints, List<string[]> stringslist)
         {
-            int offsetX = 0;
-            int offsetY = 0;
-            foreach (int[] cö in q)
-            {
-                offsetX = Math.Min(offsetX, cö[1]);
-                offsetY = Math.Min(offsetY, cö[0]);
-            }
-
-            offsetY = Math.Abs(offsetY);
-            offsetX = Math.Abs(offsetX);
-            foreach (int[] c in q)
-            {
-                c[1] = c[1] + offsetX;
-                c[0] = c[0] + offsetY;
-            }
-
-        }
-
-        public string[,] CoördinateBinder(Queue<int[]> ints, List<string[]> stringslist)
-        {
-            assembledTrack = new string[,] { };
-            int[] tempi;
+            int max = HighestYCoördinate(ints);
+            AssembledTrack = new string[ints.GetUpperBound(0)*6,max] ;
+            
+            int x = 0;
             int c0;
             int c1;
             foreach (string[] strings in stringslist)
             {
-                tempi = ints.Dequeue();
-                c0 = tempi[0]*6;
-                c1 = tempi[1];
+               
+                c0 = ints[x,0]*6;
+                
+                c1 = ints[x,1];
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 6; i++)
                 {
-                    assembledTrack[c0, c1] = strings[1];
+                    AssembledTrack[c0, c1] = strings[i];
                     c0++;
                 }
-                
+               
+                x++;
             }
 
-            return assembledTrack;
-        }
+        }*/
 
+        /* public void AssembleTrack(Model.Track track)
+             {
+                 Makelitst();
+                 trackCoördinates = new int[track.Sections.Count,2] ;
+                 Bearings b = Bearings.North;
+                 coördinates = new int[2] { 0, 0};
+                 int xcopy = 0;
+                 int ycopy = 0;
+                 int i = 0;
+                 trackSequence = new List<string[]> { };
+                 foreach (Model.Section s in track.Sections)
+                 {
+                     xcopy = coördinates[0];
+                     ycopy = coördinates[1];
+                     switch (s.SectionType)
+                     {
+                         case Model.SectionTypes.StartGrid:
+                         {
+                             switch (b)
+                             {
+                                 case Bearings.North:
+                                 {
+                                     trackSequence.Add(Startgrids[0]);
 
-    public void AssembleTrack(Model.Track track)
-        {
+                                     trackCoördinates[i,0] = xcopy;
+                                     trackCoördinates[i, 1] = ycopy;
+                                     coördinates[0] = coördinates[0] - 1;
+                                     break;
+                                 }
+                                 case Bearings.East:
+                                 {
+                                     trackSequence.Add(Startgrids[1]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[1] = coördinates[1] + 1;
+                                     break;
+                                 }
+                                 case Bearings.South:
+                                 {
+                                     trackSequence.Add(Startgrids[0]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[0] = coördinates[0] + 1;
+                                     break;
+                                 }
+                                 case Bearings.West:
+                                 {
+                                     trackSequence.Add(Startgrids[1]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[1] = coördinates[1] - 1;
+                                     break;
+                                 }
+                             }
 
-            foreach (Model.Section s in track.Sections)
-            {
-                switch (s.SectionType)
-                {
-                    case Model.SectionTypes.StartGrid:
-                    {
-                        switch (b)
-                        {
-                            case Bearings.North:
-                            {
-                                trackSequence.Add(Startgrids[0]);
+                             break;
+                         }
+                         case Model.SectionTypes.Straight:
+                         {
+                             switch (b)
+                             {
+                                 case Bearings.North:
+                                 {
+                                     trackSequence.Add(Straights[0]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[0] = coördinates[0] - 1;
+                                     break;
+                                 }
+                                 case Bearings.East:
+                                 {
+                                     trackSequence.Add(Straights[1]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[1] = coördinates[1] + 1;
+                                     break;
+                                 }
+                                 case Bearings.South:
+                                 {
+                                     trackSequence.Add(Straights[0]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[0] = coördinates[0] + 1;
+                                     break;
+                                 }
+                                 case Bearings.West:
+                                 {
+                                     trackSequence.Add(Straights[1]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[1] = coördinates[1] - 1;
+                                     break;
+                                 }
+                             }
+                             break;
+                         }
+                         case Model.SectionTypes.LeftCorner:
+                         {
+                             switch (b)
+                             {
+                                 case Bearings.North:
+                                 {
+                                     trackSequence.Add(Leftcorners[0]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[1] = coördinates[1] - 1;
+                                     b = Bearings.West;
+                                     break;
+                                 }
+                                 case Bearings.East:
+                                 {
+                                     trackSequence.Add(Leftcorners[1]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[0] = coördinates[0] - 1;
+                                     b = Bearings.North;
+                                     break;
+                                 }
+                                 case Bearings.South:
+                                 {
+                                     trackSequence.Add(Leftcorners[2]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[1] = coördinates[1] + 1;
+                                     b = Bearings.East;
+                                     break;
+                                 }
+                                 case Bearings.West:
+                                 {
+                                     trackSequence.Add(Leftcorners[3]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[0] = coördinates[0] + 1;
+                                     b = Bearings.South;
+                                     break;
+                                 }
+                             }
 
-                                q.Enqueue(coördinates);
-                                coördinates[1] = coördinates[1] + 1;
-                                break;
-                            }
-                            case Bearings.East:
-                            {
-                                trackSequence.Add(Startgrids[1]);
-                                q.Enqueue(coördinates);
-                                coördinates[0] = coördinates[0] + 1;
-                                break;
-                            }
-                            case Bearings.South:
-                            {
-                                trackSequence.Add(Startgrids[0]);
-                                q.Enqueue(coördinates);
-                                coördinates[1] = coördinates[1] - 1;
-                                break;
-                            }
-                            case Bearings.West:
-                            {
-                                trackSequence.Add(Startgrids[1]);
-                                q.Enqueue(coördinates);
-                                coördinates[0] = coördinates[0] - 1;
-                                break;
-                            }
-                        }
+                             break;
+                         }
+                         case Model.SectionTypes.RightCorner:
+                         {
+                             switch (b)
+                             {
+                                 case Bearings.North:
+                                 {
+                                     trackSequence.Add(Rightcorners[0]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[1] = coördinates[1] + 1;
+                                     b = Bearings.East;
+                                     break;
+                                 }
+                                 case Bearings.East:
+                                 {
+                                     trackSequence.Add(Rightcorners[1]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[0] = coördinates[0] + 1;
 
-                        break;
-                    }
-                    case Model.SectionTypes.Straight:
-                    {
-                        switch (b)
-                        {
-                            case Bearings.North:
-                            {
-                                trackSequence.Add(Straights[0]);
-                                q.Enqueue(coördinates);
-                                coördinates[1] = coördinates[1] + 1;
-                                break;
-                            }
-                            case Bearings.East:
-                            {
-                                trackSequence.Add(Straights[1]);
-                                q.Enqueue(coördinates);
-                                coördinates[0] = coördinates[0] + 1;
-                                break;
-                            }
-                            case Bearings.South:
-                            {
-                                trackSequence.Add(Straights[2]);
-                                q.Enqueue(coördinates);
-                                coördinates[1] = coördinates[1] - 1;
-                                break;
-                            }
-                            case Bearings.West:
-                            {
-                                trackSequence.Add(Straights[3]);
-                                q.Enqueue(coördinates);
-                                coördinates[0] = coördinates[0] - 1;
-                                break;
-                            }
-                        }
+                                     b = Bearings.South;
+                                     break;
+                                 }
+                                 case Bearings.South:
+                                 {
+                                     trackSequence.Add(Rightcorners[2]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[1] = coördinates[1] - 1;
+                                     b = Bearings.West;
+                                     break;
+                                 }
+                                 case Bearings.West:
+                                 {
+                                     trackSequence.Add(Rightcorners[3]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[0] = coördinates[0] - 1;
+                                     b = Bearings.North;
+                                     break;
+                                 }
+                             }
 
-                        break;
-                    }
-                    case Model.SectionTypes.LeftCorner:
-                    {
-                        switch (b)
-                        {
-                            case Bearings.North:
-                            {
-                                trackSequence.Add(Leftcorners[0]);
-                                q.Enqueue(coördinates);
-                                coördinates[1] = coördinates[1] + 1;
-                                b = Bearings.West;
-                                break;
-                            }
-                            case Bearings.East:
-                            {
-                                trackSequence.Add(Leftcorners[1]);
-                                q.Enqueue(coördinates);
-                                coördinates[0] = coördinates[0] + 1;
-                                b = Bearings.North;
-                                break;
-                            }
-                            case Bearings.South:
-                            {
-                                trackSequence.Add(Leftcorners[2]);
-                                q.Enqueue(coördinates);
-                                coördinates[1] = coördinates[1] - 1;
-                                b = Bearings.East;
-                                break;
-                            }
-                            case Bearings.West:
-                            {
-                                trackSequence.Add(Leftcorners[3]);
-                                q.Enqueue(coördinates);
-                                coördinates[0] = coördinates[0] - 1;
-                                b = Bearings.South;
-                                break;
-                            }
-                        }
+                             break;
+                         }
+                         case Model.SectionTypes.Finish:
+                         {
+                             switch (b)
+                             {
+                                 case Bearings.North:
+                                 {
+                                     trackSequence.Add(Finishes[0]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[0] = coördinates[0] - 1;
+                                     break;
+                                 }
+                                 case Bearings.East:
+                                 {
+                                     trackSequence.Add(Finishes[1]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[1] = coördinates[1] + 1;
+                                     break;
+                                 }
+                                 case Bearings.South:
+                                 {
+                                     trackSequence.Add(Finishes[0]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[0] = coördinates[0] + 1;
+                                     break;
+                                 }
+                                 case Bearings.West:
+                                 {
+                                     trackSequence.Add(Finishes[1]);
+                                             trackCoördinates[i, 0] = xcopy;
+                                             trackCoördinates[i, 1] = ycopy;
+                                             coördinates[1] = coördinates[1] - 1;
+                                     break;
+                                 }
+                             }
 
-                        break;
-                    }
-                    case Model.SectionTypes.RightCorner:
-                    {
-                        switch (b)
-                        {
-                            case Bearings.North:
-                            {
-                                trackSequence.Add(Rightcorners[0]);
-                                q.Enqueue(coördinates);
-                                coördinates[1] = coördinates[1] + 1;
-                                b = Bearings.East;
-                                break;
-                            }
-                            case Bearings.East:
-                            {
-                                trackSequence.Add(Rightcorners[1]);
-                                q.Enqueue(coördinates);
-                                coördinates[0] = coördinates[0] + 1;
-
-                                b = Bearings.South;
-                                break;
-                            }
-                            case Bearings.South:
-                            {
-                                trackSequence.Add(Rightcorners[2]);
-                                q.Enqueue(coördinates);
-                                coördinates[1] = coördinates[1] - 1;
-                                b = Bearings.West;
-                                break;
-                            }
-                            case Bearings.West:
-                            {
-                                trackSequence.Add(Rightcorners[3]);
-                                q.Enqueue(coördinates);
-                                coördinates[0] = coördinates[0] - 1;
-                                b = Bearings.North;
-                                break;
-                            }
-                        }
-
-                        break;
-                    }
-                    case Model.SectionTypes.Finish:
-                    {
-                        switch (b)
-                        {
-                            case Bearings.North:
-                            {
-                                trackSequence.Add(Finishes[0]);
-                                q.Enqueue(coördinates);
-                                coördinates[1] = coördinates[1] + 1;
-                                break;
-                            }
-                            case Bearings.East:
-                            {
-                                trackSequence.Add(Finishes[1]);
-                                q.Enqueue(coördinates);
-                                coördinates[0] = coördinates[0] + 1;
-                                break;
-                            }
-                            case Bearings.South:
-                            {
-                                trackSequence.Add(Finishes[0]);
-                                q.Enqueue(coördinates);
-                                coördinates[1] = coördinates[1] - 1;
-                                break;
-                            }
-                            case Bearings.West:
-                            {
-                                trackSequence.Add(Finishes[1]);
-                                q.Enqueue(coördinates);
-                                coördinates[0] = coördinates[0] - 1;
-                                break;
-                            }
-                        }
-
-                        break;
-                    }
-                }
-            }
-            
-            LowestCoördinate(q);
-            CoördinateBinder(q, trackSequence);
-
-        }
+                             break;
+                         }
+                     }
+                     i++;
+                 }
+                 LowestCoördinate(trackCoördinates);
+                 CoördinateBinder(trackCoördinates, trackSequence);
+             }*/
     }
 }
-
-

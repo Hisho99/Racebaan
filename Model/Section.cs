@@ -16,6 +16,8 @@ namespace Model
     }
     public class Section
     {
+        public int Xval { get; set; }
+        public int Yval { get; set; }
         public SectionTypes SectionType { get; set; }
 
         public Section(SectionTypes sectionType)
