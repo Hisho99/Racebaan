@@ -46,8 +46,19 @@ namespace Racebaan
                 if (sec.SectionType == Model.SectionTypes.LeftCorner)
                 {
                     LeftCornerWriter(sec, compas);
-                }else if(sec.SectionType == Model.SectionTypes.RightCorner){
+                    compas--;
+                    if (compas < 0)
+                    {
+                        compas = 3;
+                    }
+                }
+                else if(sec.SectionType == Model.SectionTypes.RightCorner){
                     RightCornerWriter(sec, compas);
+                    compas++;
+                    if (compas > 3)
+                    {
+                        compas = 0;
+                    }
                 }
                 else
                 {
@@ -69,7 +80,7 @@ namespace Racebaan
             str = TrackLoader.Leftcorners[compas];
             for (int i = 0; i < 6; i++)
             {
-                Console.SetCursorPosition(x * 6, y * 6 + i);
+                Console.SetCursorPosition(y * 6, x * 6 + i);
                 Console.Write(str[i]);
             }
 
@@ -83,7 +94,7 @@ namespace Racebaan
             str = TrackLoader.Rightcorners[compas];
             for (int i = 0; i < 6; i++)
             {
-                Console.SetCursorPosition(x * 6, y * 6 + i);
+                Console.SetCursorPosition(y * 6, x * 6 + i);
                 Console.Write(str[i]);
             }
         }
@@ -99,7 +110,7 @@ namespace Racebaan
                     str = TrackLoader.Straights[compas];
                     for (int i = 0; i < 6; i++)
                     {
-                        Console.SetCursorPosition(x * 6, y * 6 + i);
+                        Console.SetCursorPosition(y * 6, x * 6 + i);
                         Console.Write(str[i]);
                     }
                     break;
@@ -107,7 +118,7 @@ namespace Racebaan
                     str = TrackLoader.Startgrids[compas];
                     for (int i = 0; i < 6; i++)
                     {
-                        Console.SetCursorPosition(x * 6, y * 6 + i);
+                        Console.SetCursorPosition(y * 6, x * 6 + i);
                         Console.Write(str[i]);
                     }
                     break;
@@ -115,7 +126,7 @@ namespace Racebaan
                     str = TrackLoader.Finishes[compas];
                     for (int i = 0; i < 6; i++)
                     {
-                        Console.SetCursorPosition(x * 6, y * 6 + i);
+                        Console.SetCursorPosition(y * 6, x * 6 + i);
                         Console.Write(str[i]);
                     }
                     break;

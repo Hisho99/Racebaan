@@ -18,7 +18,7 @@ namespace Racebaan
             "     \\",
             "     |",
             "     |",
-            " 	  |"
+            "     |"
         };
 
         public static string[] _lcwRcn =
@@ -48,9 +48,9 @@ namespace Racebaan
             "     |",
             "     |",
             "     |",
-            "	  /",
-            "    /",
-            "---/ "
+            "     /",
+            "    / ",
+            "---/  "
         };
 
         private static string[] _straightVertical =
@@ -75,22 +75,23 @@ namespace Racebaan
 
         public static string[] _finishHorizontal =
         {
+            "------",
+            "  ##  ",
+            "      ",
+            "      ",
+            "  ##  ",
+            "------"
+        };
+
+        public static string[] _finishVertical =
+        {
+
             "|    |",
             "|    |",
             "|#  #|",
             "|#  #|",
             "|    |",
             "|    |"
-        };
-
-        public static string[] _finishVertical =
-        {
-            "------",
-            "  ##  ",
-            "      ",
-            "	   ",
-            "  ##  ",
-            "------"
         };
 
         public static string[] _finishLeftCornerUp =
@@ -173,108 +174,85 @@ namespace Racebaan
                 switch (s.SectionType)
                 {
                     case Model.SectionTypes.LeftCorner:
-                            LeftCorners(s, compas, x, y);  
-                            break;
+                        s.Xval = x;
+                        s.Yval = y;
+                        switch (compas)
+                        {
+                            case 0:
+                                y--;
+                                break;
+                            case 1:
+                                x--;
+                                break;
+                            case 2:
+                                y++;
+                                break;
+                            case 3:
+                                x++;
+                                break;
+                            default:
+                                break;
+                        }
+                        compas--;
+                        if (compas < 0)
+                        {
+                            compas = 3;
+                        }
+                        
+                        break;
                     case Model.SectionTypes.RightCorner:
-                            RightCorners(s, compas, x, y);
-                            break;
+                        s.Xval = x;
+                        s.Yval = y;
+                        switch (compas)
+                        {
+                            case 0:
+                                y++;
+                                break;
+                            case 1:
+                                x++;
+                                break;
+                            case 2:
+                                y--;
+                                break;
+                            case 3:
+                                x--;
+                                break;
+                            default:
+                                break;
+                        }
+                        compas++;
+                        if (compas > 3)
+                        {
+                            compas = 0;
+                        }
+                        
+                        break;
                     default:
-                        Straight(s, compas, x, y);
+                        s.Xval = x;
+                        s.Yval = y;
+                        switch (compas)
+                        {
+                            case 0:
+                                x-- ;
+                                break;
+                            case 1:
+                                y++;
+                                break;
+                            case 2:
+                                x++;
+                                break;
+                            case 3:
+                                y--;
+                                break;
+                            default:
+                                break;
+                        }
                         break;
                 }
             }
             NegativeXYCheck(track.Sections);
         }
 
-        public void LeftCorners(Model.Section c, int i, int x, int y)
-        {
-            /*North = -y
-              East  = -x
-              South = +y
-              West  = +x*/
-            switch (i)
-            {
-                case 0:
-                        y--;
-                        break;
-                case 1:
-                        x--;
-                        break;
-                case 2:
-                        y++;
-                        break;
-                case 3:
-                        x++;
-                        break;
-                default:
-                    break;
-            }
-            i--;
-            if (i < 0)
-            {
-                i = 3;
-            }
-            c.Xval = x;
-            c.Yval = y;
-
-        }
-        public void RightCorners(Model.Section c, int i, int x, int y)
-        {
-            /*North = +y
-              East  = +x
-              South = -y
-              West  = -x*/
-            switch (i)
-            {
-                case 0:
-                        y++;
-                        break;
-                case 1:
-                        x++;
-                        break;
-                case 2:
-                        y--;
-                        break;
-                case 3:
-                        x--;
-                        break;
-                default:
-                    break;
-            }
-            i++;
-            if (i > 3)
-            {
-                i = 0;
-            }
-            c.Xval = x;
-            c.Yval = y;
-        }
-        public void Straight(Model.Section s, int i, int x, int y)
-        {
-            /*North = -x
-              East  = +y
-              South = +x
-              West  = -y*/
-            switch (i)
-            {
-                case 0:
-                        x--;
-                    break;
-                case 1:
-                        y++;
-                        break;
-                case 2:
-                        x++;
-                        break;
-                case 3:
-                        y--;
-                        break;
-                default:
-                    break;
-            }
-            s.Xval = x;
-            s.Yval = y;
-        }
         public void NegativeXYCheck(LinkedList<Model.Section> s)
         {
             int offsetX = 0;
@@ -292,11 +270,16 @@ namespace Racebaan
                 offsetX = Math.Abs(offsetX);
                 foreach (Model.Section sec in s)
                 {
-                    sec.Xval = sec.Xval + offsetX;
-                    sec.Yval = sec.Yval + offsetY;
+                    sec.Xval +=  offsetX;
+                    sec.Yval +=  offsetY;
                 } 
             }
         }
+
+
+
+
+
 
 
         //variables to compensate for negative coördinates, ultimately creating only positive coördinates
